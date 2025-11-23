@@ -41,7 +41,7 @@ pico_set_program_name(picomixer "picomixer")
 pico_set_program_version(picomixer "0.1")
 
 # Generate PIO header
-pico_generate_pio_header(picomixer ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
+pico_generate_pio_header(picomixer ${CMAKE_CURRENT_LIST_DIR}/tdm_out.pio ${CMAKE_CURRENT_LIST_DIR}/tdm_in.pio)
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(picomixer 1)

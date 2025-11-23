@@ -1,0 +1,22 @@
+.define SAMPLE_BITS 32
+.define CHANNELS 4
+
+.define BIT_COUNTER (SAMPLE_BITS - 1)
+.define CHANNEL_COUNTER (SAMPLE_BITS - 1)
+
+; pin 0 fsync
+; pin 1 bclk
+; pin 2 serial
+
+.program tdm_in
+; use autopush to read in tdm samples
+    set y, CHANNEL_COUNTER
+    wait 1 pin 0    ; wait for fsync high
+    in pins 1       ; read serial data pin
+    set x, BIT_COUNTER
+    wait 0 pin 1    ; wait for bclk low
+read_loop:
+    wait 1 pin 1
+    in pins 1
+    jmp x-- read_loop
+    jmp y-- read_loop

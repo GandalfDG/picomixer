@@ -34,9 +34,9 @@ sample_bits:
 
 .program fsync
     set x, 0
-wait:
+wait_irq:
     wait 1 IRQ FSYNC_IRQ
-    jmp x-- wait
+    jmp x-- wait_irq
     set pins 1 [3]
     set pins 0
     set x, CHANNEL_COUNTER
