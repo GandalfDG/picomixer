@@ -6,6 +6,37 @@
 
 ; 132 MHz system clock would give a nice multiple of 6MHz
 
-.program tdmout
-    PULL
-    OUT 
+; pin 0 - bclk
+; pin 1 - sync pulse
+
+.define FSYNC_IRQ 4
+
+.define SAMPLE_BITS 32
+.define CHANNELS 4
+
+.define BIT_COUNTER (SAMPLE_BITS - 1)
+.define CHANNEL_COUNTER (CHANNELS - 1)
+
+
+; output 1 bit every 8 clock cycles, maximum bits per second at 133MHz 16.625 Mbps
+.program bclk_ser
+.side_set 1 opt
+
+pull_sample:
+    pull side 0                  ; get one 32-bit sample from the TX_FIFO
+    set x, BIT_COUNTER           ; bit loop counter
+    irq set FSYNC_IRQ  [1]       ; notify the sync pulse state machine that it's time
+sample_bits:    
+    out pins, 1 side 1           ; sample bit and bclk high
+    jmp x-- pull_sample [2]      ; get a new sample if 32 bits output
+    jmp sample_bits side 0 [3]   ; otherwise bclk low and loop
+
+
+.program fsync
+    set x, 0
+wait:
+    wait 1 IRQ FSYNC_IRQ
+    jmp x-- wait
+    set pins 1 [3]
+    set pins 0
+    set x, CHANNEL_COUNTER
