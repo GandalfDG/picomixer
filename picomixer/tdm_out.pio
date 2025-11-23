@@ -1,0 +1,11 @@
+; bit clock - (32 +2) * 44.1 * 4 
+; minimum frequency is 5.9976 MHz
+; 6MHz would probably be a decent margin
+; sync pulse 1-4 bit clock width for each frame
+; bit output on rising edge of bit clock
+
+; 132 MHz system clock would give a nice multiple of 6MHz
+
+.program tdmout
+    PULL
+    OUT 
