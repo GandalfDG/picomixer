@@ -1,0 +1,4 @@
+{
+    "name": "Pico SDK Devcontainer",
+    "image": "ghcr.io/gandalfdg/pi-sdk-devcontainer:latest"
+}
