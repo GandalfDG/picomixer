@@ -12,7 +12,7 @@ pico_sdk_init()
 add_executable(picomixer
 src/picomixer.c
 )
-pico_generate_pio_header(picomixer ${CMAKE_CURRENT_LIST_DIR}/src/blink.pio)
+pico_generate_pio_header(picomixer ${CMAKE_CURRENT_LIST_DIR}/src/blink.pio ${CMAKE_CURRENT_LIST_DIR}/src/tdm_out.pio)
 
 pico_enable_stdio_usb(picomixer 1)
 pico_add_extra_outputs(picomixer)

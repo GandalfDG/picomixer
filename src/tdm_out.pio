@@ -40,3 +40,26 @@ wait_irq:
     set pins 1 [3]
     set pins 0
     set x, CHANNEL_COUNTER
+
+% c-sdk {
+void tdm_output_init(PIO pio, uint bit_sm, uint fsync_sm, uint base_pin) {
+
+    sm_config bit_sm_config = bclk_ser_program_get_default_config(bclk_offset);
+    sm_config fsync_sm_config = fsync_program_get_default_config(fsync_offset);
+
+    // set output and sideset pins, join the FIFOs to form a bigger TX FIFO
+    sm_config_set_out_pins(&bit_sm_config, base_pin, 1);
+    sm_config_set_sideset_pins(&bit_sm_config, base_pin + 1);
+    sm_config_set_fifo_join(&bit_sm_config, PIO_FIFO_JOIN_TX);
+    sm_config_set_clkdiv(&bit_sm_config, 2.94518849206) // 4 channels 32 bits 44.1KHz * 8 clk cycles/bit
+
+    // set fsync output pin
+    sm_config_set_out_pins(&fsync_sm_config, base_pin + 2, 1);
+    sm_config_set_clkdiv(&fsync_sm_config, 2.94518849206) // 4 channels 32 bits 44.1KHz * 8 clk cycles/bit
+    
+    for(uint pin = base_pin; pin < base_pin + 3; pin++) {
+        pio_gpio_init(pio, pin);
+    }
+
+}
+%}
