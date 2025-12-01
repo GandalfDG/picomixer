@@ -1,4 +1,11 @@
 {
     "name": "Pico SDK Devcontainer",
-    "image": "ghcr.io/gandalfdg/pi-sdk-devcontainer:latest"
+    "image": "ghcr.io/gandalfdg/pi-sdk-devcontainer:latest",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cmake-tools"
+            ]
+        }
+    }
 }
