@@ -39,8 +39,7 @@ void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
 
 void setup_tdm_out_pio(PIO pio, uint bclk_offset, uint fsync_offset) {
     tdm_output_init(pio, bclk_offset, fsync_offset, 0);
-    pio_sm_set_enabled(pio, 1, true);
-    pio_sm_set_enabled(pio, 0, true);
+    pio_enable_sm_mask_in_sync(pio, 0b11);
 }
 
 int main()

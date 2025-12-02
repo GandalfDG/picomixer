@@ -33,6 +33,7 @@ start_sample:
     out pins, 1 side 1                   ; sample bit and bclk high
     jmp x-- sample_bits [2]                 ; get a new sample if 32 bits output
 
+
 .program fsync
     set x, 0
 .wrap_target
@@ -46,8 +47,8 @@ wait_irq:
 % c-sdk {
 void tdm_output_init(PIO pio, uint bclk_offset, uint fsync_offset, uint base_pin) {
 
-    // float clock_divider = 2.94518849206;
-    float clock_divider = 200.0;
+    // float clock_divider = 2.94518849206;  // 4 channels 32 bits 44.1KHz * 8 clk cycles/bit
+    float clock_divider = 100.0;
 
     pio_sm_config bit_sm_config = bclk_ser_program_get_default_config(bclk_offset);
     pio_sm_config fsync_sm_config = fsync_program_get_default_config(fsync_offset);
@@ -57,11 +58,11 @@ void tdm_output_init(PIO pio, uint bclk_offset, uint fsync_offset, uint base_pin
     sm_config_set_sideset_pins(&bit_sm_config, base_pin + 1);
     sm_config_set_fifo_join(&bit_sm_config, PIO_FIFO_JOIN_TX);
     // sm_config_set_out_shift(&bit_sm_config, 1, 1, 32);
-    sm_config_set_clkdiv(&bit_sm_config, clock_divider); // 4 channels 32 bits 44.1KHz * 8 clk cycles/bit
+    sm_config_set_clkdiv(&bit_sm_config, clock_divider);
 
     // set fsync output pin
     sm_config_set_set_pins(&fsync_sm_config, base_pin + 2, 1);
-    sm_config_set_clkdiv(&fsync_sm_config, clock_divider); // 4 channels 32 bits 44.1KHz * 8 clk cycles/bit
+    sm_config_set_clkdiv(&fsync_sm_config, clock_divider);
     
     pio_sm_set_consecutive_pindirs(pio, 0, base_pin, 2, 1);
     pio_sm_set_consecutive_pindirs(pio, 1, base_pin + 2, 1, 1);
