@@ -14,6 +14,7 @@
 #define PIN_MOSI 19
 
 #include "blink.pio.h"
+#include "tdm_out.pio.h"
 
 void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
     blink_program_init(pio, sm, offset, pin);
@@ -36,35 +37,24 @@ void blink_pin_forever(PIO pio, uint sm, uint offset, uint pin, uint freq) {
 #define UART_TX_PIN 4
 #define UART_RX_PIN 5
 
-
+void setup_tdm_out_pio(PIO pio, uint bclk_offset, uint fsync_offset) {
+    tdm_output_init(pio, bclk_offset, fsync_offset, 0);
+    pio_sm_set_enabled(pio, 1, true);
+    pio_sm_set_enabled(pio, 0, true);
+}
 
 int main()
 {
     stdio_init_all();
 
-    // SPI initialisation. This example will use SPI at 1MHz.
-    spi_init(SPI_PORT, 1000*1000);
-    gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(PIN_CS,   GPIO_FUNC_SIO);
-    gpio_set_function(PIN_SCK,  GPIO_FUNC_SPI);
-    gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
     
-    // Chip select is active-low, so we'll initialise it to a driven-high state
-    gpio_set_dir(PIN_CS, GPIO_OUT);
-    gpio_put(PIN_CS, 1);
-    // For more examples of SPI use see https://github.com/raspberrypi/pico-examples/tree/master/spi
 
     // PIO Blinking example
     PIO pio = pio0;
-    uint offset = pio_add_program(pio, &blink_program);
-    printf("Loaded program at %d\n", offset);
+    uint bclk_offset = pio_add_program(pio, &bclk_ser_program);
+    uint fsync_offset = pio_add_program(pio, &fsync_program);
     
-    #ifdef PICO_DEFAULT_LED_PIN
-    blink_pin_forever(pio, 0, offset, PICO_DEFAULT_LED_PIN, 3);
-    #else
-    blink_pin_forever(pio, 0, offset, 6, 3);
-    #endif
-    // For more pio examples see https://github.com/raspberrypi/pico-examples/tree/master/pio
+    setup_tdm_out_pio(pio, bclk_offset, fsync_offset);
 
     // Set up our UART
     uart_init(UART_ID, BAUD_RATE);
