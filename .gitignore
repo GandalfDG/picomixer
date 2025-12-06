@@ -3,3 +3,6 @@ build
 
 *.sr
 *.pvs
+
+# pcb files
+pcb/picomixer/picomixer-backups/
